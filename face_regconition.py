@@ -1,14 +1,21 @@
 import pandas as pd
-import os, errno
+import os, errno, glob, shutil
 
-train_csv = pd.read_csv('/home/harry/python/aivivn/data/train.csv')
+train_csv = pd.read_csv('../aivivn/data/train.csv')
 grouped = train_csv.groupby('label')
 
-for image,group in grouped:
+for name,group in grouped:
 	try:
-		os.makedirs('/home/harry/python/aivivn/sorted_images/'+str(image))
+		os.makedirs('../aivivn/sorted_images/'+str(name))
 	except OSError as e:
 		if e.errno != errno.EEXIST:
 			raise
-	print(image)
+	for image in glob.glob('../aivivn/data/train/*.png'):
+	    basename = os.path.basename(image)
+	    if basename in group.values:
+	    	shutil.copy(image, '../aivivn/sorted_images/'+str(name))
+	print(name)
 	print(group)
+
+
+
